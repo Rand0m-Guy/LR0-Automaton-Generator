@@ -96,9 +96,7 @@ class Scanner {
                 tokens.push_back(t);
                 analog += "N";
                 lexema = "";
-            }
-
-            if(state == 5) {
+            } else if(state == 5) {
                 Token t = Token(TokenType::TERMINAL, lexema);
                 tokens.push_back(t);
                 analog += "T";

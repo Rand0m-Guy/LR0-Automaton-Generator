@@ -36,26 +36,53 @@ std::vector<std::pair<initialProductions, Node*>> existingNodes;
 Grammar grammar;
 int nodeID;
 
-// Function definitions
+// Function declarations
+void run(int argc, char **argv);
+void analyzeGrammarFromFile(int size, char** argv);
+Node* generateAutomaton();
 Node* generateNode(std::vector<std::pair<Production, int>>);
 void printAutomaton(Node*, std::vector<bool>&);
+void printNode(Node*, std::vector<bool>&);
 
 int main(int argc, char **argv) {
+    try {
+        run(argc, argv);
+    } catch(const std::runtime_error& e) {
+        std::cout<<e.what()<<std::endl;
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+void run(int argc, char **argv) {
     if(argc == 1) {
-        std::cout<<"Pass .txt as parameter\n";
-        return 0;
+        throw std::runtime_error("Pass .txt as parameter\n");
     }
 
     // Get Grammar from txt file
-    for(int i = 1; i < argc; i++) {
+    try {
+        analyzeGrammarFromFile(argc, argv);
+    } catch(const std::runtime_error& e) {
+        throw e;
+    }
+
+    // Generate Automaton   
+    Node* initialNode = generateAutomaton();
+
+    std::vector<bool> visited(existingNodes.size(), false); // Avoid visiting node more than once
+    printAutomaton(initialNode, visited);
+}
+
+void analyzeGrammarFromFile(int size, char** argv) {
+    for(int i = 1; i < size; i++) {
         Scanner scanner = Scanner(argv[i]);
         std::pair<Token, std::vector<Token>> completeProduction;
 
         try {
             completeProduction = scanner.scan(); // Syntax Analysis
         } catch(const std::runtime_error& e) {
-            std::cout<<e.what()<<std::endl;
-            return EXIT_FAILURE;
+            throw e;
         }
 
         Production production = Production(completeProduction.first, completeProduction.second); // Formalize Production structure
@@ -65,17 +92,12 @@ int main(int argc, char **argv) {
         grammar.addProduction(production);
     }
     grammar.augment();
+}
 
-    // Generate Automaton   
+Node* generateAutomaton() {
     initialProductions augmented = {{grammar.productionOnIndex(0), 0}}; // 0 represents the "point" position
     nodeID = 0;
-
-    Node* initialNode = generateNode(augmented);
-
-    std::vector<bool> visited(existingNodes.size(), false); // Avoid visiting node more than once
-    printAutomaton(initialNode, visited);
-
-    return 0;
+    return generateNode(augmented);
 }
 
 Node* generateNode(initialProductions initial) {
@@ -117,7 +139,11 @@ Node* generateNode(initialProductions initial) {
     return newNode;
 }
 
-void printAutomaton(Node* n, std::vector<bool>& visited) {
+void printAutomaton(Node* initialNode, std::vector<bool>& initialNodeVisited) {
+    printNode(initialNode, initialNodeVisited);
+}
+
+void printNode(Node* n, std::vector<bool>& visited) {
     if(visited[n->getValue()]) return;
 
     visited[n->getValue()] = true;
@@ -156,6 +182,6 @@ void printAutomaton(Node* n, std::vector<bool>& visited) {
     }
 
     for(auto ad : n->getAdjacentNodes()) {
-        printAutomaton(ad.first, visited);
+        printNode(ad.first, visited);
     }
 }
