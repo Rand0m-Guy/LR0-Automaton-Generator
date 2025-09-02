@@ -28,14 +28,6 @@ class Production {
             return body;
         }
 
-        void setLeftSide(Token li) {
-            leftSide = li;
-        }
-
-        void setBody(std::vector<Token> c) {
-            body = c;
-        }
-
         bool operator==(const Production& rhs) const {
             return (rhs.body == body) && (rhs.leftSide == leftSide);
         }

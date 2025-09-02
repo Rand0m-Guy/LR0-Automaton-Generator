@@ -22,10 +22,6 @@ class Grammar {
             productions = p;
         }
 
-        Token getStartSymbol() {
-            return startSymbol;
-        }
-
         std::vector<Production> getProductions() {
             return productions;
         }
@@ -34,20 +30,12 @@ class Grammar {
             startSymbol = i;
         }
 
-        void setProductions(std::vector<Production> d) {
-            productions = d;
-        }
-
         void addProduction(Production d) {
             productions.push_back(d);
         }
 
         Production productionOnIndex(int i) {
             return productions[i];
-        }
-
-        size_t getGrammarSize() {
-            return productions.size();
         }
 
         void augment() {

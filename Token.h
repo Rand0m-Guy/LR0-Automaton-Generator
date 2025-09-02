@@ -30,14 +30,6 @@ class Token {
             return name;
         }
 
-        void setType(TokenType t) {
-            type = t;
-        }
-
-        void setName(std::string n) {
-            name = n;
-        }
-
         bool operator==(const Token& rhs) const {
             return (type == rhs.type) && !(name.compare(rhs.name));
         }

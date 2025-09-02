@@ -33,10 +33,6 @@ class Node {
             }
         }
 
-        void setReduction(Token t) {
-            reduction = t;
-        }
-
         std::set<Token> getAdjacentTokens() {
             return adjacentTokens;
         }
